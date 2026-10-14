@@ -175,7 +175,36 @@
     color: white;
   }
   .task-title { font-weight: 600; font-size: 15.5px; }
-  .qr-section {
+  .logo-home {
+    width: 180px;
+    height: auto;
+    margin-bottom: 8px;
+  }
+  .logo-small {
+    width: 42px;
+    height: auto;
+    position: absolute;
+    top: 12px;
+    right: 16px;
+  }
+  .toast {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #16a34a;
+    color: white;
+    padding: 12px 24px;
+    border-radius: 30px;
+    font-weight: 600;
+    opacity: 0;
+    transition: opacity 0.3s;
+    z-index: 1000;
+    pointer-events: none;
+  }
+  .toast.show {
+    opacity: 1;
+  }
     margin-top: 32px;
     padding: 20px;
     text-align: center;
@@ -409,6 +438,7 @@
 <!-- HOME -->
 <div id="home" class="view active">
   <div class="home">
+    <img src="Logo.png" alt="MAHAJAKTOOLS" class="logo-home">
     <h2>ระบบเช็คงาน Preventive Maintenance</h2>
     <p>เลือกเมนูด้านล่างเพื่อเริ่มต้นใช้งาน</p>
     <div class="home-buttons">
@@ -427,6 +457,7 @@
 
 <!-- YEAR VIEW (read-only) -->
 <div id="year" class="view">
+  <img src="Logo.png" alt="Logo" class="logo-small">
   <button class="back-btn" data-goto="home">← กลับหน้าแรก</button>
   <div class="legend">
     <span><i class="dot" style="background:var(--blue)"></i> Plan</span>
@@ -439,6 +470,7 @@
 
 <!-- MONTH VIEW -->
 <div id="month" class="view">
+  <img src="Logo.png" alt="Logo" class="logo-small">
   <button class="back-btn" data-goto="home">← กลับหน้าแรก</button>
   <div class="month-controls">
     <label>เลือกเดือน:</label>
@@ -448,25 +480,27 @@
   <div class="month-tasks" id="monthTasks"></div>
 </div>
 
+<div id="toast" class="toast">ลงข้อมูลแล้ว</div>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script>
 const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 const weeks = ['W1','W2','W3','W4'];
 
 const tasks = [
-  { id:1, name:'ตรวจสอบหมึกเครื่องปริ้นเตอร์', freq:'Yearly', plan:[{m:0,w:0},{m:5,w:2}] },
+  { id:1, name:'ตรวจสอบหมึกเครื่องปริ้นเตอร์', freq:'Yearly', plan:[{m:0,w:0},{m:5,w:2},{m:11,w:3}] },
   { id:2, name:'ตรวจสอบทรัพย์สินของแผนก', freq:'Yearly', plan:[{m:0,w:0},{m:5,w:2},{m:11,w:3}] },
-  { id:3, name:'ตรวจเช็คการทำงานของเครื่องเซิร์ฟเวอร์', freq:'4 month', plan:[{m:1,w:1},{m:1,w:2},{m:5,w:1},{m:5,w:2},{m:11,w:1},{m:11,w:2}] },
-  { id:4, name:'ตรวจเช็คคุณภาพแบตเตอรี่ใน UPS', freq:'4 month', plan:[{m:1,w:1},{m:1,w:2},{m:5,w:1},{m:5,w:2},{m:11,w:1},{m:11,w:2}] },
-  { id:5, name:'Cleaning dust (Desktop PC)', freq:'6 month', plan:[{m:5,w:1},{m:5,w:2},{m:11,w:1},{m:11,w:2}] },
-  { id:6, name:'ทำความสะอาดหัวพิมพ์ Epson', freq:'6 month', plan:[{m:5,w:1},{m:5,w:2},{m:11,w:1},{m:11,w:2}] },
-  { id:7, name:'ตรวจเช็คโปรแกรมแพลทฟอร์มในเครื่อง PC & NB', freq:'Quarter', plan:[{m:1,w:1},{m:1,w:2},{m:4,w:1},{m:4,w:2},{m:7,w:1},{m:7,w:2},{m:10,w:1},{m:10,w:2}] },
-  { id:8, name:'ตรวจเช็คการอัปเดท Window & Driver', freq:'Quarter', plan:[{m:1,w:1},{m:1,w:2},{m:4,w:1},{m:4,w:2},{m:7,w:1},{m:7,w:2},{m:10,w:1},{m:10,w:2}] },
-  { id:9, name:'ตรวจเช็คการทำงานเครื่องปริ้นเตอร์', freq:'Quarter', plan:[{m:1,w:1},{m:1,w:2},{m:4,w:1},{m:4,w:2},{m:7,w:1},{m:7,w:2},{m:10,w:1},{m:10,w:2}] },
-  { id:10, name:'ตรวจเช็ค Scanner Barcode', freq:'Quarter', plan:[{m:1,w:1},{m:1,w:2},{m:4,w:1},{m:4,w:2},{m:7,w:1},{m:7,w:2},{m:10,w:1},{m:10,w:2}] },
-  { id:11, name:'ตรวจเช็คอุปกรณ์ที่ใช้ร่วมกับคอมพิวเตอร์', freq:'Quarter', plan:[{m:1,w:1},{m:1,w:2},{m:4,w:1},{m:4,w:2},{m:7,w:1},{m:7,w:2},{m:10,w:1},{m:10,w:2}] },
-  { id:12, name:'Clean & Clear temp', freq:'Quarter', plan:[{m:1,w:1},{m:1,w:2},{m:4,w:1},{m:4,w:2},{m:7,w:1},{m:7,w:2},{m:10,w:1},{m:10,w:2}] },
-  { id:13, name:'ทำการแบ็คอัพไฟล์กลาง', freq:'Monthly', plan: months.map((_,i)=>({m:i,w:0})) },
+  { id:3, name:'ตรวจเช็คการทำงานของเครื่องเซิร์ฟเวอร์', freq:'4 month', plan:[{m:1,w:1},{m:1,w:2},{m:5,w:1},{m:5,w:2},{m:11,w:2},{m:11,w:3}] },
+  { id:4, name:'ตรวจเช็คคุณภาพแบตเตอรี่ใน UPS', freq:'4 month', plan:[{m:1,w:1},{m:1,w:2},{m:5,w:1},{m:5,w:2},{m:11,w:2},{m:11,w:3}] },
+  { id:5, name:'Cleaning dust (Desktop PC)', freq:'6 month', plan:[{m:5,w:0},{m:5,w:1},{m:5,w:2},{m:11,w:0},{m:11,w:1},{m:11,w:2},{m:11,w:3}] },
+  { id:6, name:'ทำความสะอาดหัวพิมพ์ Epson', freq:'6 month', plan:[{m:5,w:0},{m:5,w:1},{m:5,w:2},{m:11,w:0},{m:11,w:1},{m:11,w:2},{m:11,w:3}] },
+  { id:7, name:'ตรวจเช็คโปรแกรมแพลทฟอร์มในเครื่อง PC & NB', freq:'Quarter', plan:[{m:1,w:0},{m:1,w:1},{m:1,w:2},{m:4,w:0},{m:4,w:1},{m:4,w:2},{m:7,w:0},{m:7,w:1},{m:7,w:2},{m:10,w:0},{m:10,w:1},{m:10,w:2}] },
+  { id:8, name:'ตรวจเช็คการอัปเดท Window & Driver', freq:'Quarter', plan:[{m:1,w:0},{m:1,w:1},{m:1,w:2},{m:4,w:0},{m:4,w:1},{m:4,w:2},{m:7,w:0},{m:7,w:1},{m:7,w:2},{m:10,w:0},{m:10,w:1},{m:10,w:2}] },
+  { id:9, name:'ตรวจเช็คการทำงานเครื่องปริ้นเตอร์', freq:'Quarter', plan:[{m:1,w:0},{m:1,w:1},{m:1,w:2},{m:4,w:0},{m:4,w:1},{m:4,w:2},{m:7,w:0},{m:7,w:1},{m:7,w:2},{m:10,w:0},{m:10,w:1},{m:10,w:2}] },
+  { id:10, name:'ตรวจเช็ค Scanner Barcode', freq:'Quarter', plan:[{m:1,w:0},{m:1,w:1},{m:1,w:2},{m:4,w:0},{m:4,w:1},{m:4,w:2},{m:7,w:0},{m:7,w:1},{m:7,w:2},{m:10,w:0},{m:10,w:1},{m:10,w:2}] },
+  { id:11, name:'ตรวจเช็คอุปกรณ์ที่ใช้ร่วมกับคอมพิวเตอร์', freq:'Quarter', plan:[{m:1,w:0},{m:1,w:1},{m:1,w:2},{m:4,w:0},{m:4,w:1},{m:4,w:2},{m:7,w:0},{m:7,w:1},{m:7,w:2},{m:10,w:0},{m:10,w:1},{m:10,w:2}] },
+  { id:12, name:'Clean & Clear temp', freq:'Quarter', plan:[{m:1,w:0},{m:1,w:1},{m:1,w:2},{m:4,w:0},{m:4,w:1},{m:4,w:2},{m:7,w:0},{m:7,w:1},{m:7,w:2},{m:10,w:0},{m:10,w:1},{m:10,w:2}] },
+  { id:13, name:'ทำการแบ็คอัพไฟล์กลาง', freq:'Monthly', plan:[{m:0,w:0},{m:1,w:0},{m:3,w:0},{m:4,w:0},{m:5,w:0},{m:6,w:0},{m:7,w:0},{m:8,w:0},{m:9,w:0},{m:10,w:0},{m:11,w:0}] },
   { id:14, name:'Backup data SML', freq:'Daily', plan: months.map((_,i)=>[{m:i,w:0},{m:i,w:1},{m:i,w:2},{m:i,w:3}]).flat() },
   { id:15, name:'Support User', freq:'Daily', plan: months.map((_,i)=>[{m:i,w:0},{m:i,w:1},{m:i,w:2},{m:i,w:3}]).flat() },
 ];
@@ -558,27 +592,43 @@ function renderMonth() {
     const dueThisMonth = task.plan.some(p => p.m === mi);
     if (!dueThisMonth) return;
 
-    // For simplicity, check if any week is checked this month
-    const checked = weeks.some((_, wi) => isChecked(task.id, mi, wi) && task.plan.some(p => p.m === mi && p.w === wi));
+    // Check if all planned weeks this month are checked
+    const plannedThisMonth = task.plan.filter(p => p.m === mi);
+    const allChecked = plannedThisMonth.length > 0 && plannedThisMonth.every(p => isChecked(task.id, mi, p.w));
+
+    // Skip already completed tasks
+    if (allChecked) return;
 
     const card = document.createElement('div');
-    card.className = 'task-card' + (checked ? ' checked' : '');
+    card.className = 'task-card';
     card.innerHTML = `
-      <div class="check-dot ${checked ? 'checked' : ''}">${checked ? '✓' : ''}</div>
+      <div class="check-dot"></div>
       <div class="task-info">
         <div class="task-title">${task.name}</div>
         <div class="task-meta">${task.freq}</div>
       </div>
     `;
     card.addEventListener('click', () => {
-      // Toggle all planned weeks in this month
-      task.plan.filter(p => p.m === mi).forEach(p => {
+      // Mark all planned weeks in this month as checked
+      plannedThisMonth.forEach(p => {
         const key = getKey(task.id, mi, p.w);
-        state[key] = !checked;
+        state[key] = true;
       });
       save();
-      buildYearTable();
-      renderMonth();
+
+      // Show toast
+      const toast = document.getElementById('toast');
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 1200);
+
+      // Animate card out then re-render
+      card.style.transition = 'all 0.4s ease';
+      card.style.opacity = '0';
+      card.style.transform = 'translateX(20px)';
+      setTimeout(() => {
+        buildYearTable();
+        renderMonth();
+      }, 350);
     });
     container.appendChild(card);
   });

@@ -464,7 +464,7 @@ let printers = JSON.parse(localStorage.getItem('printers') || 'null') || Array.f
 
 let checks = {};
 
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxtafZBbRivPGOco6wPaKKkEliX0LGVl_bmi4OtCqX31mgZQoJJUNz95k2MWW__LI12rw/exec';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxtafZBbRivPGOco6wPaKKkEIiX0LGVl_bmi4OtCqX31mgZQoJJUNz95k2MWW__LI12rw/exec';
 
 // Load checks from Google Sheets
 async function loadChecks() {
@@ -478,15 +478,13 @@ async function loadChecks() {
   }
 }
 
-// Save one check to Google Sheets
+// Save one check to Google Sheets (use GET to avoid CORS issues)
 async function saveCheck(key, checked) {
   checks[key] = checked;
-  localStorage.setItem('deviceChecks', JSON.stringify(checks)); // backup
+  localStorage.setItem('deviceChecks', JSON.stringify(checks));
   try {
-    await fetch(SCRIPT_URL, {
-      method: 'POST',
-      body: JSON.stringify({ key, checked, note: '' })
-    });
+    const url = SCRIPT_URL + '?key=' + encodeURIComponent(key) + '&checked=' + checked;
+    await fetch(url, { method: 'GET', mode: 'no-cors' });
   } catch (e) {
     console.error('Save failed', e);
   }

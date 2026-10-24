@@ -407,6 +407,13 @@
     <select id="monthSelect" onchange="renderMonthTasks()"></select>
     <input type="text" id="searchBox" class="search-box" placeholder="ค้นหาชื่อเครื่อง..." oninput="renderMonthTasks()">
   </div>
+  <div class="filter-bar">
+    <button class="filter-btn active" id="filterPending" onclick="setFilter('pending')">ยังไม่เช็ค</button>
+    <button class="filter-btn" id="filterDone" onclick="setFilter('done')">เช็คแล้ว</button>
+  </div>
+  <div class="month-actions">
+    <button class="check-all-btn" onclick="checkAllMonth()">เช็คทั้งหมดของเดือนนี้</button>
+  </div>
   <div id="monthContent"></div>
 </div>
 
@@ -625,6 +632,15 @@ const printerTasks = [
   'ตรวจเช็คการทำงานอุปกรณ์ที่ใช้ร่วมกับคอมพิวเตอร์'
 ];
 
+let currentFilter = 'pending';
+
+function setFilter(f) {
+  currentFilter = f;
+  document.getElementById('filterPending').classList.toggle('active', f === 'pending');
+  document.getElementById('filterDone').classList.toggle('active', f === 'done');
+  renderMonthTasks();
+}
+
 function renderMonthTasks() {
   const sel = document.getElementById('monthSelect');
   if (!sel.options.length) {
@@ -669,15 +685,17 @@ function renderMonthTasks() {
     pcs.forEach(d => {
       if (search && !d.name.toLowerCase().includes(search)) return;
       const key = `pc-${d.id}-${task}-${month}`;
-      if (checks[key]) return;
+      const isChecked = !!checks[key];
+      if (currentFilter === 'pending' && isChecked) return;
+      if (currentFilter === 'done' && !isChecked) return;
       const card = document.createElement('div');
       card.className = 'device-card check-card';
       card.innerHTML = `
         <div class="emoji">💻</div>
-        <div class="check-dot"></div>
+        <div class="check-dot ${isChecked ? 'checked' : ''}"></div>
         <span>${d.name}</span>
       `;
-      card.querySelector('.check-dot').addEventListener('click', () => markDone(key, card));
+      card.querySelector('.check-dot').addEventListener('click', () => toggleCheck(key, card));
       list.appendChild(card);
     });
     container.appendChild(list);
@@ -704,15 +722,17 @@ function renderMonthTasks() {
     printers.forEach(d => {
       if (search && !d.name.toLowerCase().includes(search)) return;
       const key = `prn-${d.id}-${task}-${month}`;
-      if (checks[key]) return;
+      const isChecked = !!checks[key];
+      if (currentFilter === 'pending' && isChecked) return;
+      if (currentFilter === 'done' && !isChecked) return;
       const card = document.createElement('div');
       card.className = 'device-card check-card';
       card.innerHTML = `
         <div class="emoji">🖨️</div>
-        <div class="check-dot"></div>
+        <div class="check-dot ${isChecked ? 'checked' : ''}"></div>
         <span>${d.name}</span>
       `;
-      card.querySelector('.check-dot').addEventListener('click', () => markDone(key, card));
+      card.querySelector('.check-dot').addEventListener('click', () => toggleCheck(key, card));
       list.appendChild(card);
     });
     container.appendChild(list);
@@ -738,16 +758,28 @@ function checkAll(task, type, month) {
   renderMonthTasks();
 }
 
-function markDone(key, card) {
-  checks[key] = true;
+function toggleCheck(key, card) {
+  checks[key] = !checks[key];
   saveChecks();
   const toast = document.getElementById('toast');
+  toast.textContent = checks[key] ? 'ลงข้อมูลแล้ว' : 'ยกเลิกการเช็คแล้ว';
   toast.classList.add('show');
-  setTimeout(() => toast.classList.remove('show'), 1000);
-  card.style.transition = 'all .35s';
-  card.style.opacity = '0';
-  card.style.transform = 'translateX(16px)';
-  setTimeout(() => renderMonthTasks(), 300);
+  setTimeout(() => toast.classList.remove('show'), 900);
+  renderMonthTasks();
+}
+
+function checkAllMonth() {
+  const month = +document.getElementById('monthSelect').value;
+  if (!confirm('ต้องการเช็คทุกงานของเดือนนี้ให้ครบทุกเครื่องใช่หรือไม่?')) return;
+  [...pcTasks, ...printerTasks].forEach(task => {
+    const devices = pcTasks.includes(task) ? pcs : printers;
+    const prefix = pcTasks.includes(task) ? 'pc' : 'prn';
+    devices.forEach(d => {
+      checks[`${prefix}-${d.id}-${task}-${month}`] = true;
+    });
+  });
+  saveChecks();
+  renderMonthTasks();
 }
 
 // Init

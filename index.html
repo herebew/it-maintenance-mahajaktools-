@@ -3,491 +3,394 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>IT Preventive Maintenance Plan</title>
+<title>IT Preventive Maintenance - MAHAJAKTOOLS</title>
 <style>
   :root {
     --blue: #1e40af;
     --green: #16a34a;
-    --yellow: #eab308;
-    --gray: #e5e7eb;
     --bg: #f8fafc;
   }
   * { box-sizing: border-box; }
   body {
-    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    font-family: system-ui, -apple-system, sans-serif;
     background: var(--bg);
     margin: 0;
     padding: 12px;
     color: #1e293b;
-    -webkit-tap-highlight-color: transparent;
   }
   h1 {
     text-align: center;
     background: linear-gradient(90deg, #1e3a8a, #1e40af);
     color: white;
     margin: -12px -12px 16px;
-    padding: 16px 12px;
-    font-size: 1.25rem;
+    padding: 16px;
+    font-size: 1.3rem;
   }
-  .home {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+  .view { display: none; }
+  .view.active { display: block; }
+  .home { text-align: center; padding: 20px 12px; }
+  .logo-home { width: 160px; margin-bottom: 12px; }
+  .home-buttons { display: flex; flex-direction: column; gap: 12px; max-width: 340px; margin: 20px auto; }
+  .btn {
+    padding: 16px;
+    border: none;
+    border-radius: 12px;
+    font-size: 1.05rem;
+    font-weight: 600;
+    cursor: pointer;
+    background: white;
+    box-shadow: 0 2px 8px rgba(0,0,0,.08);
+  }
+  .btn.primary { background: var(--blue); color: white; }
+  .back-btn {
+    background: white;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+    cursor: pointer;
+    font-weight: 600;
+  }
+  .device-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
     gap: 16px;
-    padding: 24px 12px 40px;
-    text-align: center;
+    max-width: 100%;
+    margin: 0 auto 20px;
+    padding: 0 8px;
   }
-  .home h2 {
-    font-size: 1.45rem;
-    margin: 0;
-    color: #1e3a8a;
-  }
-  .home p {
-    color: #475569;
-    max-width: 360px;
-    line-height: 1.5;
-    font-size: 0.95rem;
-  }
-  .home-buttons {
+  .device-card {
+    background: white;
+    border-radius: 16px;
+    padding: 18px;
     display: flex;
     flex-direction: column;
     gap: 12px;
-    width: 100%;
-    max-width: 340px;
-  }
-  .home-btn {
-    padding: 18px 20px;
-    font-size: 1.05rem;
-    font-weight: 600;
-    border: none;
-    border-radius: 14px;
-    cursor: pointer;
-    background: white;
-    box-shadow: 0 4px 12px rgba(0,0,0,.08);
-    transition: transform 0.1s, box-shadow 0.1s;
-  }
-  .home-btn:active {
-    transform: scale(0.98);
-  }
-  .home-btn.primary {
-    background: var(--blue);
-    color: white;
-  }
-  .back-btn {
-    position: sticky;
-    top: 8px;
-    z-index: 10;
-    background: white;
-    border: none;
-    padding: 10px 16px;
-    border-radius: 10px;
-    cursor: pointer;
-    font-weight: 600;
-    box-shadow: 0 2px 6px rgba(0,0,0,.1);
-    margin-bottom: 12px;
-  }
-  .year-container {
-    overflow-x: auto;
-    background: white;
-    border-radius: 12px;
-    padding: 8px;
-    box-shadow: 0 4px 12px rgba(0,0,0,.08);
-    -webkit-overflow-scrolling: touch;
-  }
-  table {
-    border-collapse: collapse;
-    min-width: 980px;
-    width: 100%;
-    font-size: 12px;
-  }
-  th, td {
+    box-shadow: 0 4px 14px rgba(0,0,0,.06);
     border: 1px solid #e2e8f0;
-    padding: 5px 2px;
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+  .device-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(0,0,0,.09);
+  }
+  .remote-card {
+    background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
     text-align: center;
   }
-  .task-name {
-    text-align: left;
-    padding-left: 8px;
-    white-space: nowrap;
-    max-width: 200px;
-    overflow: hidden;
-    text-overflow: ellipsis;
+  .remote-card h4 {
+    margin: 0 0 4px;
+    font-size: 1.1rem;
   }
-  .cell {
-    width: 24px;
-    height: 24px;
-    cursor: default;
+  .remote-card .id-text {
+    color: #64748b;
+    font-size: 13px;
+    margin-bottom: 8px;
   }
-  .month-controls {
-    display: flex;
-    gap: 10px;
-    align-items: center;
-    margin-bottom: 14px;
-    justify-content: center;
-    flex-wrap: wrap;
-  }
-  select, button {
-    padding: 10px 14px;
-    border-radius: 10px;
+  .device-card input[type="text"],
+  .device-card input:not([type="checkbox"]) {
+    width: 100%;
+    padding: 9px 12px;
     border: 1px solid #cbd5e1;
-    font-size: 15px;
+    border-radius: 8px;
+    font-size: 14px;
   }
-  .month-tasks {
-    display: grid;
-    gap: 10px;
-    max-width: 100%;
-    margin: 0 auto;
-    padding-bottom: 20px;
-  }
-  .task-card {
-    background: white;
-    border-radius: 14px;
-    padding: 14px 16px;
+  .device-card label {
+    font-size: 13.5px;
     display: flex;
     align-items: center;
-    gap: 14px;
-    box-shadow: 0 2px 6px rgba(0,0,0,.06);
+    gap: 8px;
+    color: #334155;
+  }
+  .remote-btn {
+    display: block;
+    background: #1e40af;
+    color: white;
+    text-align: center;
+    padding: 9px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 14px;
+  }
+  .remote-btn:hover { background: #1e3a8a; }
+  .delete-btn {
+    background: #fee2e2;
+    border: none;
+    border-radius: 8px;
+    padding: 8px;
     cursor: pointer;
-    min-height: 68px;
+    color: #b91c1c;
+    font-weight: 600;
+    width: 100%;
   }
-  .task-card:active {
-    background: #f1f5f9;
-  }
-  .task-card.checked {
-    background: #f0fdf4;
+  .device-card span {
+    font-size: 14px;
+    font-weight: 500;
   }
   .check-dot {
     width: 32px;
     height: 32px;
     border-radius: 50%;
     border: 3px solid #cbd5e1;
+    cursor: pointer;
     flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 18px;
-    font-weight: bold;
-    color: transparent;
   }
-  .check-dot.checked {
-    background: var(--green);
-    border-color: var(--green);
-    color: white;
-  }
-  .task-title { font-weight: 600; font-size: 15.5px; }
-  .logo-home {
-    width: 180px;
-    height: auto;
-    margin-bottom: 8px;
-  }
-  .logo-small {
-    width: 42px;
-    height: auto;
-    position: absolute;
-    top: 12px;
-    right: 16px;
-  }
-  .toast {
-    position: fixed;
-    bottom: 30px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: #16a34a;
-    color: white;
-    padding: 12px 24px;
-    border-radius: 30px;
-    font-weight: 600;
-    opacity: 0;
-    transition: opacity 0.3s;
-    z-index: 1000;
-    pointer-events: none;
-  }
-  .toast.show {
-    opacity: 1;
-  }
-    margin-top: 32px;
-    padding: 20px;
-    text-align: center;
-    background: white;
-    border-radius: 16px;
-    box-shadow: 0 2px 8px rgba(0,0,0,.06);
-  }
-  .qr-section h3 {
-    margin: 0 0 8px;
-    font-size: 1.1rem;
-    color: #1e3a8a;
-  }
-  .qr-section p {
-    font-size: 0.85rem;
-    color: #64748b;
-    margin: 0 0 14px;
-  }
-  #qrcode {
-    display: flex;
-    justify-content: center;
-    margin: 12px 0;
-  }
-  .share-link {
-    font-size: 0.8rem;
-    word-break: break-all;
-    color: #3b82f6;
-    background: #f1f5f9;
-    padding: 8px 12px;
+  .device-card input {
+    flex: 1;
+    border: 1px solid #e2e8f0;
     border-radius: 8px;
-    margin-top: 8px;
-  }
-
-  @media (min-width: 600px) {
-    body { padding: 16px; }
-    h1 { font-size: 1.4rem; margin: -16px -16px 20px; padding: 18px 16px; }
-    .home { padding: 40px 16px; }
-    .month-tasks { max-width: 640px; }
-    .task-name { max-width: 280px; }
-    .cell { width: 28px; height: 28px; }
-  }
-  .view { display: none; }
-  .view.active { display: block; }
-  .legend {
-    display: flex;
-    gap: 16px;
-    margin: 12px 0;
-    justify-content: center;
-    font-size: 14px;
-  }
-  .legend span {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-  .dot {
-    width: 16px;
-    height: 16px;
-    border-radius: 3px;
-    display: inline-block;
-  }
-  .freq {
-    font-size: 11px;
-    color: #64748b;
-    background: #f8fafc;
-  }
-  .cell.plan { background: var(--blue); }
-  .cell.checked { background: var(--green); }
-  .cell.inspect { background: var(--yellow); }
-  .cell.empty { background: #f8fafc; }
-  th {
-    background: #f1f5f9;
-    font-weight: 600;
-  }
-  }
-  .task-name {
-    text-align: left;
-    padding-left: 10px;
-    white-space: nowrap;
-    max-width: 280px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  .freq {
-    font-size: 11px;
-    color: #64748b;
-    background: #f8fafc;
-  }
-  .home {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 20px;
-    padding: 40px 16px;
-    text-align: center;
-  }
-  .home h2 {
-    font-size: 1.6rem;
-    margin: 0;
-    color: #1e3a8a;
-  }
-  .home p {
-    color: #475569;
-    max-width: 480px;
-    line-height: 1.5;
-  }
-  .home-buttons {
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-    width: 100%;
-    max-width: 360px;
-  }
-  .home-btn {
-    padding: 16px 24px;
-    font-size: 1.1rem;
-    font-weight: 600;
-    border: none;
-    border-radius: 12px;
-    cursor: pointer;
-    background: white;
-    box-shadow: 0 4px 12px rgba(0,0,0,.08);
-    transition: transform 0.1s, box-shadow 0.1s;
-  }
-  .home-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(0,0,0,.12);
-  }
-  .home-btn.primary {
-    background: var(--blue);
-    color: white;
-  }
-  .back-btn {
-    position: absolute;
-    top: 16px;
-    left: 16px;
-    background: white;
-    border: none;
-    padding: 8px 14px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: 600;
-    box-shadow: 0 1px 3px rgba(0,0,0,.1);
-  }
-  .cell {
-    width: 28px;
-    height: 28px;
-    cursor: default;
-  }
-  .cell:hover { opacity: 1; outline: none; }
-  .legend {
-    display: flex;
-    gap: 16px;
-    margin: 12px 0;
-    justify-content: center;
-    font-size: 14px;
-  }
-  .legend span {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-  .dot {
-    width: 16px;
-    height: 16px;
-    border-radius: 3px;
-    display: inline-block;
-  }
-
-  /* Month View */
-  .month-controls {
-    display: flex;
-    gap: 12px;
-    align-items: center;
-    margin-bottom: 16px;
-    justify-content: center;
-    flex-wrap: wrap;
-  }
-  select, button {
-    padding: 8px 14px;
-    border-radius: 8px;
-    border: 1px solid #cbd5e1;
+    padding: 8px 10px;
     font-size: 15px;
   }
-  .month-tasks {
-    display: grid;
-    gap: 8px;
-    max-width: 640px;
-    margin: 0 auto;
-  }
-  .task-card {
-    background: white;
-    border-radius: 12px;
-    padding: 12px 16px;
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    box-shadow: 0 1px 3px rgba(0,0,0,.06);
-    cursor: pointer;
-  }
-  .task-card:hover { background: #f8fafc; }
-  .task-card.checked {
-    background: #f0fdf4;
-  }
   .check-dot {
-    width: 26px;
-    height: 26px;
+    width: 28px;
+    height: 28px;
     border-radius: 50%;
-    border: 2.5px solid #cbd5e1;
+    border: 3px solid #cbd5e1;
+    cursor: pointer;
     flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 16px;
-    font-weight: bold;
-    color: transparent;
-    transition: all 0.15s;
   }
   .check-dot.checked {
     background: var(--green);
     border-color: var(--green);
-    color: white;
   }
-  .task-info { flex: 1; }
-  .task-title { font-weight: 600; font-size: 15px; }
-  .task-meta { font-size: 12.5px; color: #64748b; margin-top: 2px; }
+  .search-box {
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto 16px;
+    display: block;
+    padding: 10px 14px;
+    border: 1px solid #cbd5e1;
+    border-radius: 10px;
+    font-size: 15px;
+  }
+  .progress {
+    font-size: 13px;
+    color: #16a34a;
+    font-weight: 600;
+    margin-left: 8px;
+  }
+  .add-btn { margin: 10px auto; display: block; }
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--green);
+    color: white;
+    padding: 12px 22px;
+    border-radius: 30px;
+    opacity: 0;
+    transition: opacity 0.3s;
+    z-index: 100;
+  }
+  .toast.show { opacity: 1; }
+  .year-container {
+    overflow-x: auto;
+    background: white;
+    border-radius: 12px;
+    padding: 8px;
+    margin-top: 12px;
+    -webkit-overflow-scrolling: touch;
+  }
+  table {
+    border-collapse: collapse;
+    min-width: 980px;
+    font-size: 12px;
+  }
+  th, td {
+    border: 1px solid #e2e8f0;
+    padding: 4px 2px;
+    text-align: center;
+  }
+  th { background: #f1f5f9; font-weight: 600; }
+  .task-name { text-align: left; padding-left: 8px; max-width: 220px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .freq { font-size: 11px; background: #f8fafc; color: #64748b; }
+  .cell { width: 22px; height: 22px; }
+  .cell.plan { background: #1e40af; }
+  .cell.checked { background: #16a34a; }
+  .cell.empty { background: #f8fafc; }
+  .legend { display: flex; gap: 16px; justify-content: center; margin: 12px 0; font-size: 14px; }
+  .dot { width: 14px; height: 14px; border-radius: 3px; display: inline-block; }
+  select { padding: 8px 12px; border-radius: 8px; font-size: 15px; }
 </style>
 </head>
 <body>
-<h1>Master Plan & Preventive Maintenance Plan IT Equipment</h1>
+<h1>IT Preventive Maintenance</h1>
 
 <!-- HOME -->
 <div id="home" class="view active">
   <div class="home">
-    <img src="Logo.png" alt="MAHAJAKTOOLS" class="logo-home">
+    <img src="Logo.png" alt="Logo" class="logo-home">
     <h2>ระบบเช็คงาน Preventive Maintenance</h2>
-    <p>เลือกเมนูด้านล่างเพื่อเริ่มต้นใช้งาน</p>
     <div class="home-buttons">
-      <button class="home-btn primary" data-goto="month">เช็คงานรายเดือน</button>
-      <button class="home-btn" data-goto="year">ดูตารางทั้งปี (ความเคลื่อนไหว)</button>
-    </div>
-
-    <div class="qr-section">
-      <h3>แชร์ให้คนอื่นสแกนดู</h3>
-      <p>สแกน QR Code เพื่อเปิดแอปนี้บนมือถือ</p>
-      <div id="qrcode"></div>
-      <div class="share-link" id="shareLink"></div>
+      <button class="btn primary" onclick="go('month')">เช็คงานรายเดือน</button>
+      <button class="btn" onclick="go('remote')">Remote User</button>
+      <button class="btn" onclick="go('devices')">จัดการรายการเครื่อง</button>
+      <button class="btn" onclick="go('year')">ดูตารางทั้งปี</button>
     </div>
   </div>
 </div>
 
-<!-- YEAR VIEW (read-only) -->
+<!-- MONTH VIEW -->
+<div id="month" class="view">
+  <button class="back-btn" onclick="go('home')">← กลับหน้าแรก</button>
+  <div class="month-controls">
+    <label>เลือกเดือน: </label>
+    <select id="monthSelect" onchange="renderMonthTasks()"></select>
+    <input type="text" id="searchBox" class="search-box" placeholder="ค้นหาชื่อเครื่อง..." oninput="renderMonthTasks()">
+  </div>
+  <div id="monthContent"></div>
+</div>
+
+<!-- REMOTE VIEW -->
+<div id="remote" class="view">
+  <button class="back-btn" onclick="go('home')">← กลับหน้าแรก</button>
+  <h3 class="section-title">Remote User</h3>
+  <p style="text-align:center; color:#64748b; margin-bottom:16px;">เลือกเครื่องที่ต้องการรีโมท</p>
+  <div id="remoteList" class="device-list"></div>
+</div>
+<div id="devices" class="view">
+  <button class="back-btn" onclick="go('home')">← กลับหน้าแรก</button>
+  <h3 class="section-title">คอมพิวเตอร์ (PC / NB)</h3>
+  <div id="pcList" class="device-list"></div>
+  <button class="btn add-btn" onclick="addDevice('pc')">+ เพิ่มเครื่อง PC</button>
+
+  <h3 class="section-title">เครื่องปริ้นเตอร์</h3>
+  <div id="printerList" class="device-list"></div>
+  <button class="btn add-btn" onclick="addDevice('printer')">+ เพิ่มเครื่องปริ้น</button>
+</div>
+
+<!-- YEAR VIEW -->
 <div id="year" class="view">
-  <img src="Logo.png" alt="Logo" class="logo-small">
-  <button class="back-btn" data-goto="home">← กลับหน้าแรก</button>
+  <button class="back-btn" onclick="go('home')">← กลับหน้าแรก</button>
   <div class="legend">
-    <span><i class="dot" style="background:var(--blue)"></i> Plan</span>
-    <span><i class="dot" style="background:var(--green)"></i> Checked</span>
+    <span><i class="dot" style="background:#1e40af"></i> Plan</span>
+    <span><i class="dot" style="background:#16a34a"></i> Checked</span>
   </div>
   <div class="year-container">
     <table id="yearTable"></table>
   </div>
 </div>
 
-<!-- MONTH VIEW -->
-<div id="month" class="view">
-  <img src="Logo.png" alt="Logo" class="logo-small">
-  <button class="back-btn" data-goto="home">← กลับหน้าแรก</button>
-  <div class="month-controls">
-    <label>เลือกเดือน:</label>
-    <select id="monthSelect"></select>
-    <button id="resetMonth">รีเซ็ตเดือนนี้</button>
-  </div>
-  <div class="month-tasks" id="monthTasks"></div>
-</div>
-
 <div id="toast" class="toast">ลงข้อมูลแล้ว</div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script>
-const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-const weeks = ['W1','W2','W3','W4'];
+const months = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
 
-const tasks = [
+// Default devices
+let pcs = JSON.parse(localStorage.getItem('pcs') || 'null') || Array.from({length:32}, (_,i) => ({
+  id: i+1,
+  name: `PC-${String(i+1).padStart(2,'0')}`,
+  anydeskId: '',
+  unattended: false,
+  note: ''
+}));
+let printers = JSON.parse(localStorage.getItem('printers') || 'null') || Array.from({length:15}, (_,i) => ({id:i+1, name:`Printer-${i+1}`}));
+
+// Per-device checked state: key = `${type}-${deviceId}-${task}-${month}`
+let checks = JSON.parse(localStorage.getItem('deviceChecks') || '{}');
+
+function saveDevices() {
+  localStorage.setItem('pcs', JSON.stringify(pcs));
+  localStorage.setItem('printers', JSON.stringify(printers));
+}
+function saveChecks() {
+  localStorage.setItem('deviceChecks', JSON.stringify(checks));
+}
+
+function go(view) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.getElementById(view).classList.add('active');
+  if (view === 'devices') renderDevices();
+  if (view === 'month') renderMonthTasks();
+  if (view === 'year') buildYearTable();
+  if (view === 'remote') renderRemote();
+}
+
+function renderRemote() {
+  const container = document.getElementById('remoteList');
+  container.innerHTML = '';
+  const remotePcs = pcs.filter(d => d.anydeskId);
+  if (remotePcs.length === 0) {
+    container.innerHTML = '<p style="text-align:center;color:#64748b;grid-column:1/-1;">ยังไม่มีเครื่องที่กรอก AnyDesk ID<br>ไปที่หน้าจัดการรายการเครื่องเพื่อเพิ่ม</p>';
+    return;
+  }
+  remotePcs.forEach(d => {
+    const card = document.createElement('div');
+    card.className = 'device-card remote-card';
+    card.innerHTML = `
+      <h4>${d.name}</h4>
+      <div class="id-text">AnyDesk: ${d.anydeskId}</div>
+      ${d.unattended ? '<div style="color:#16a34a;font-size:13px;font-weight:600;">✓ Unattended</div>' : ''}
+      ${d.note ? `<div style="font-size:13px;color:#475569;">${d.note}</div>` : ''}
+      <a href="anydesk:${d.anydeskId}" class="remote-btn">รีโมทตอนนี้</a>
+    `;
+    container.appendChild(card);
+  });
+}
+
+function renderDevices() {
+  const pcContainer = document.getElementById('pcList');
+  pcContainer.innerHTML = '';
+  pcs.forEach((d, idx) => {
+    const card = document.createElement('div');
+    card.className = 'device-card';
+    card.style.minWidth = '220px';
+    card.innerHTML = `
+      <input type="text" value="${d.name}" placeholder="ชื่อเครื่อง" onchange="pcs[${idx}].name=this.value; saveDevices()">
+      <input type="text" value="${d.anydeskId || ''}" placeholder="AnyDesk ID" onchange="pcs[${idx}].anydeskId=this.value; saveDevices()">
+      <label>
+        <input type="checkbox" ${d.unattended ? 'checked' : ''} onchange="pcs[${idx}].unattended=this.checked; saveDevices()">
+        เปิด Unattended แล้ว
+      </label>
+      <input type="text" value="${d.note || ''}" placeholder="หมายเหตุ" onchange="pcs[${idx}].note=this.value; saveDevices()">
+      ${d.anydeskId ? `<a href="anydesk:${d.anydeskId}" class="remote-btn">รีโมท</a>` : ''}
+      <button class="delete-btn" onclick="confirmDelete('pc', ${idx})">ลบ</button>
+    `;
+    pcContainer.appendChild(card);
+  });
+
+  const prnContainer = document.getElementById('printerList');
+  prnContainer.innerHTML = '';
+  printers.forEach((d, idx) => {
+    const card = document.createElement('div');
+    card.className = 'device-card';
+    card.innerHTML = `
+      <input value="${d.name}" onchange="printers[${idx}].name=this.value; saveDevices()">
+      <button onclick="confirmDelete('printer', ${idx})" style="background:#fee2e2;border:none;border-radius:6px;padding:6px 10px;cursor:pointer;">ลบ</button>
+    `;
+    prnContainer.appendChild(card);
+  });
+}
+
+function confirmDelete(type, idx) {
+  const name = type === 'pc' ? pcs[idx].name : printers[idx].name;
+  if (confirm(`ต้องการลบ "${name}" ใช่หรือไม่?`)) {
+    if (type === 'pc') pcs.splice(idx, 1);
+    else printers.splice(idx, 1);
+    saveDevices();
+    renderDevices();
+  }
+}
+
+function addDevice(type) {
+  if (type === 'pc') {
+    const n = pcs.length + 1;
+    pcs.push({id: Date.now(), name: `PC-${String(n).padStart(2,'0')}`, anydeskId: '', unattended: false, note: ''});
+  } else {
+    const n = printers.length + 1;
+    printers.push({id: Date.now(), name: `Printer-${n}`});
+  }
+  saveDevices();
+  renderDevices();
+}
+
+// Year plan data
+const yearMonths = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const weeks = ['W1','W2','W3','W4'];
+const yearTasks = [
   { id:1, name:'ตรวจสอบหมึกเครื่องปริ้นเตอร์', freq:'Yearly', plan:[{m:0,w:0},{m:5,w:2},{m:11,w:3}] },
   { id:2, name:'ตรวจสอบทรัพย์สินของแผนก', freq:'Yearly', plan:[{m:0,w:0},{m:5,w:2},{m:11,w:3}] },
   { id:3, name:'ตรวจเช็คการทำงานของเครื่องเซิร์ฟเวอร์', freq:'4 month', plan:[{m:1,w:1},{m:1,w:2},{m:5,w:1},{m:5,w:2},{m:11,w:2},{m:11,w:3}] },
@@ -501,38 +404,23 @@ const tasks = [
   { id:11, name:'ตรวจเช็คอุปกรณ์ที่ใช้ร่วมกับคอมพิวเตอร์', freq:'Quarter', plan:[{m:1,w:0},{m:1,w:1},{m:1,w:2},{m:4,w:0},{m:4,w:1},{m:4,w:2},{m:7,w:0},{m:7,w:1},{m:7,w:2},{m:10,w:0},{m:10,w:1},{m:10,w:2}] },
   { id:12, name:'Clean & Clear temp', freq:'Quarter', plan:[{m:1,w:0},{m:1,w:1},{m:1,w:2},{m:4,w:0},{m:4,w:1},{m:4,w:2},{m:7,w:0},{m:7,w:1},{m:7,w:2},{m:10,w:0},{m:10,w:1},{m:10,w:2}] },
   { id:13, name:'ทำการแบ็คอัพไฟล์กลาง', freq:'Monthly', plan:[{m:0,w:0},{m:1,w:0},{m:3,w:0},{m:4,w:0},{m:5,w:0},{m:6,w:0},{m:7,w:0},{m:8,w:0},{m:9,w:0},{m:10,w:0},{m:11,w:0}] },
-  { id:14, name:'Backup data SML', freq:'Daily', plan: months.map((_,i)=>[{m:i,w:0},{m:i,w:1},{m:i,w:2},{m:i,w:3}]).flat() },
-  { id:15, name:'Support User', freq:'Daily', plan: months.map((_,i)=>[{m:i,w:0},{m:i,w:1},{m:i,w:2},{m:i,w:3}]).flat() },
+  { id:14, name:'Backup data SML', freq:'Daily', plan: yearMonths.map((_,i)=>[{m:i,w:0},{m:i,w:1},{m:i,w:2},{m:i,w:3}]).flat() },
+  { id:15, name:'Support User', freq:'Daily', plan: yearMonths.map((_,i)=>[{m:i,w:0},{m:i,w:1},{m:i,w:2},{m:i,w:3}]).flat() },
 ];
 
-// Load / Save state
-let state = JSON.parse(localStorage.getItem('pmState') || '{}');
-function save() {
-  localStorage.setItem('pmState', JSON.stringify(state));
-}
-function getKey(taskId, m, w) { return `${taskId}-${m}-${w}`; }
-function isChecked(taskId, m, w) {
-  return !!state[getKey(taskId, m, w)];
-}
-function toggleCheck(taskId, m, w) {
-  const key = getKey(taskId, m, w);
-  state[key] = !state[key];
-  save();
-}
+let yearState = JSON.parse(localStorage.getItem('pmState') || '{}');
 
-// Build Year Table
 function buildYearTable() {
   const table = document.getElementById('yearTable');
+  if (!table) return;
   let html = '<thead><tr><th rowspan="2">Schedule</th><th rowspan="2">Task</th>';
-  months.forEach(m => {
-    html += `<th colspan="4">${m}-24</th>`;
-  });
+  yearMonths.forEach(m => html += `<th colspan="4">${m}-24</th>`);
   html += '</tr><tr>';
-  months.forEach(() => weeks.forEach(w => html += `<th>${w}</th>`));
+  yearMonths.forEach(() => weeks.forEach(w => html += `<th>${w}</th>`));
   html += '</tr></thead><tbody>';
 
   const groups = {};
-  tasks.forEach(t => {
+  yearTasks.forEach(t => {
     if (!groups[t.freq]) groups[t.freq] = [];
     groups[t.freq].push(t);
   });
@@ -542,14 +430,14 @@ function buildYearTable() {
       html += '<tr>';
       if (idx === 0) html += `<td class="freq" rowspan="${list.length}">${freq}</td>`;
       html += `<td class="task-name" title="${task.name}">${task.name}</td>`;
-      months.forEach((_, mi) => {
+      yearMonths.forEach((_, mi) => {
         weeks.forEach((_, wi) => {
           const planned = task.plan.some(p => p.m === mi && p.w === wi);
-          const checked = isChecked(task.id, mi, wi);
+          const checked = !!yearState[`${task.id}-${mi}-${wi}`];
           let cls = 'empty';
           if (planned && checked) cls = 'checked';
           else if (planned) cls = 'plan';
-          html += `<td class="cell ${cls}" data-task="${task.id}" data-m="${mi}" data-w="${wi}"></td>`;
+          html += `<td class="cell ${cls}"></td>`;
         });
       });
       html += '</tr>';
@@ -557,116 +445,122 @@ function buildYearTable() {
   }
   html += '</tbody>';
   table.innerHTML = html;
-  // Year view is read-only — no click handlers
 }
+const pcTasks = [
+  'Cleaning dust (Desktop PC)',
+  'ตรวจเช็คโปรแกรมแปลกปลอมในเครื่อง PC & NB',
+  'Clean & Clear temp'
+];
+const printerTasks = [
+  'ตรวจสอบสต็อคหมึกเครื่องปริ้นเตอร์',
+  'ทำความสะอาดที่ซับหมึกเคลียร์ซับหมึก เครื่องปริ้น Epson / Brother',
+  'ตรวจเช็คการทำงานเครื่องปริ้นเตอร์',
+  'ตรวจเช็ค Scanner Barcode',
+  'ตรวจเช็คการทำงานอุปกรณ์ที่ใช้ร่วมกับคอมพิวเตอร์'
+];
 
-// Navigation
-function goTo(view) {
-  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-  document.getElementById(view).classList.add('active');
-  if (view === 'year') buildYearTable();
-  if (view === 'month') renderMonth();
-}
-
-document.querySelectorAll('[data-goto]').forEach(el => {
-  el.addEventListener('click', () => goTo(el.dataset.goto));
-});
-
-// Month View
-function renderMonth() {
+function renderMonthTasks() {
   const sel = document.getElementById('monthSelect');
   if (!sel.options.length) {
     months.forEach((m, i) => {
       const opt = document.createElement('option');
       opt.value = i;
-      opt.textContent = m + '-24';
+      opt.textContent = m + ' 2024';
       sel.appendChild(opt);
     });
-    sel.value = new Date().getMonth(); // current month roughly
+    sel.value = new Date().getMonth();
   }
-  const mi = +sel.value;
-  const container = document.getElementById('monthTasks');
+  const month = +sel.value;
+  const search = (document.getElementById('searchBox')?.value || '').toLowerCase().trim();
+  const container = document.getElementById('monthContent');
   container.innerHTML = '';
 
-  tasks.forEach(task => {
-    const dueThisMonth = task.plan.some(p => p.m === mi);
-    if (!dueThisMonth) return;
+  // Helper to count progress
+  function getProgress(devices, typePrefix, task) {
+    const total = devices.length;
+    const done = devices.filter(d => checks[`${typePrefix}-${d.id}-${task}-${month}`]).length;
+    return { done, total };
+  }
 
-    // Check if all planned weeks this month are checked
-    const plannedThisMonth = task.plan.filter(p => p.m === mi);
-    const allChecked = plannedThisMonth.length > 0 && plannedThisMonth.every(p => isChecked(task.id, mi, p.w));
+  // PC section
+  const pcTitle = document.createElement('h3');
+  pcTitle.className = 'section-title';
+  pcTitle.textContent = `คอมพิวเตอร์ (${pcs.length} เครื่อง)`;
+  container.appendChild(pcTitle);
 
-    // Skip already completed tasks
-    if (allChecked) return;
+  pcTasks.forEach(task => {
+    const prog = getProgress(pcs, 'pc', task);
+    const taskTitle = document.createElement('div');
+    taskTitle.style.fontWeight = '600';
+    taskTitle.style.margin = '12px 0 6px';
+    taskTitle.innerHTML = `${task} <span class="progress">เช็คไปแล้ว ${prog.done}/${prog.total}</span>`;
+    container.appendChild(taskTitle);
 
-    const card = document.createElement('div');
-    card.className = 'task-card';
-    card.innerHTML = `
-      <div class="check-dot"></div>
-      <div class="task-info">
-        <div class="task-title">${task.name}</div>
-        <div class="task-meta">${task.freq}</div>
-      </div>
-    `;
-    card.addEventListener('click', () => {
-      // Mark all planned weeks in this month as checked
-      plannedThisMonth.forEach(p => {
-        const key = getKey(task.id, mi, p.w);
-        state[key] = true;
-      });
-      save();
-
-      // Show toast
-      const toast = document.getElementById('toast');
-      toast.classList.add('show');
-      setTimeout(() => toast.classList.remove('show'), 1200);
-
-      // Animate card out then re-render
-      card.style.transition = 'all 0.4s ease';
-      card.style.opacity = '0';
-      card.style.transform = 'translateX(20px)';
-      setTimeout(() => {
-        buildYearTable();
-        renderMonth();
-      }, 350);
+    const list = document.createElement('div');
+    list.className = 'device-list';
+    pcs.forEach(d => {
+      if (search && !d.name.toLowerCase().includes(search)) return;
+      const key = `pc-${d.id}-${task}-${month}`;
+      if (checks[key]) return;
+      const card = document.createElement('div');
+      card.className = 'device-card';
+      card.innerHTML = `
+        <div class="check-dot"></div>
+        <span>${d.name}</span>
+      `;
+      card.querySelector('.check-dot').addEventListener('click', () => markDone(key, card));
+      list.appendChild(card);
     });
-    container.appendChild(card);
+    container.appendChild(list);
+  });
+
+  // Printer section
+  const prnTitle = document.createElement('h3');
+  prnTitle.className = 'section-title';
+  prnTitle.textContent = `เครื่องปริ้นเตอร์ (${printers.length} เครื่อง)`;
+  container.appendChild(prnTitle);
+
+  printerTasks.forEach(task => {
+    const prog = getProgress(printers, 'prn', task);
+    const taskTitle = document.createElement('div');
+    taskTitle.style.fontWeight = '600';
+    taskTitle.style.margin = '12px 0 6px';
+    taskTitle.innerHTML = `${task} <span class="progress">เช็คไปแล้ว ${prog.done}/${prog.total}</span>`;
+    container.appendChild(taskTitle);
+
+    const list = document.createElement('div');
+    list.className = 'device-list';
+    printers.forEach(d => {
+      if (search && !d.name.toLowerCase().includes(search)) return;
+      const key = `prn-${d.id}-${task}-${month}`;
+      if (checks[key]) return;
+      const card = document.createElement('div');
+      card.className = 'device-card';
+      card.innerHTML = `
+        <div class="check-dot"></div>
+        <span>${d.name}</span>
+      `;
+      card.querySelector('.check-dot').addEventListener('click', () => markDone(key, card));
+      list.appendChild(card);
+    });
+    container.appendChild(list);
   });
 }
 
-document.getElementById('monthSelect').addEventListener('change', renderMonth);
-document.getElementById('resetMonth').addEventListener('click', () => {
-  const mi = +document.getElementById('monthSelect').value;
-  tasks.forEach(task => {
-    task.plan.filter(p => p.m === mi).forEach(p => {
-      delete state[getKey(task.id, mi, p.w)];
-    });
-  });
-  save();
-  buildYearTable();
-  renderMonth();
-});
+function markDone(key, card) {
+  checks[key] = true;
+  saveChecks();
+  const toast = document.getElementById('toast');
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 1000);
+  card.style.transition = 'all .35s';
+  card.style.opacity = '0';
+  card.style.transform = 'translateX(16px)';
+  setTimeout(() => renderMonthTasks(), 300);
+}
 
 // Init
-renderMonth();
-buildYearTable();
-
-// Generate QR Code for current page
-function generateQR() {
-  const url = window.location.href;
-  document.getElementById('shareLink').textContent = url;
-  if (typeof QRCode !== 'undefined') {
-    new QRCode(document.getElementById('qrcode'), {
-      text: url,
-      width: 160,
-      height: 160,
-      colorDark: "#1e3a8a",
-      colorLight: "#ffffff",
-      correctLevel: QRCode.CorrectLevel.H
-    });
-  }
-}
-generateQR();
+document.getElementById('monthSelect').addEventListener('change', renderMonthTasks);
 </script>
 </body>
 </html>

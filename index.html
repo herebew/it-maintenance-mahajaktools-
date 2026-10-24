@@ -7,8 +7,80 @@
 <style>
   :root {
     --blue: #1e40af;
+    --blue-light: #3b82f6;
     --green: #16a34a;
-    --bg: #f8fafc;
+    --bg: #f1f5f9;
+    --card: #ffffff;
+    --text: #1e293b;
+    --muted: #64748b;
+  }
+  body {
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background: var(--bg);
+    margin: 0;
+    padding: 16px;
+    color: var(--text);
+    line-height: 1.5;
+  }
+  h1 {
+    text-align: center;
+    background: linear-gradient(90deg, #1e3a8a, #2563eb);
+    color: white;
+    margin: -16px -16px 20px;
+    padding: 18px 16px;
+    font-size: 1.35rem;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+  }
+  .home {
+    text-align: center;
+    padding: 30px 16px 40px;
+  }
+  .logo-home {
+    width: 150px;
+    margin-bottom: 16px;
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,.08));
+  }
+  .home h2 {
+    font-size: 1.55rem;
+    margin: 0 0 8px;
+    color: #1e3a8a;
+  }
+  .home-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    max-width: 360px;
+    margin: 28px auto 0;
+  }
+  .btn {
+    padding: 16px 20px;
+    border: none;
+    border-radius: 14px;
+    font-size: 1.05rem;
+    font-weight: 600;
+    cursor: pointer;
+    background: white;
+    box-shadow: 0 4px 12px rgba(0,0,0,.06);
+    transition: all 0.15s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+  }
+  .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0,0,0,.1);
+  }
+  .btn.primary {
+    background: linear-gradient(90deg, #1e40af, #2563eb);
+    color: white;
+  }
+  .section-title {
+    font-weight: 700;
+    margin: 24px 0 12px;
+    color: #1e3a8a;
+    font-size: 1.15rem;
   }
   * { box-sizing: border-box; }
   body {
@@ -60,6 +132,67 @@
     padding: 0 8px;
   }
   .device-card {
+    background: white;
+    border-radius: 16px;
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    box-shadow: 0 4px 14px rgba(0,0,0,.05);
+    border: 1px solid #e2e8f0;
+    transition: all 0.18s ease;
+  }
+  .device-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,.08);
+  }
+  .check-card {
+    align-items: center;
+    text-align: center;
+    min-height: 110px;
+    justify-content: center;
+  }
+  .check-card .emoji {
+    font-size: 32px;
+    line-height: 1;
+  }
+  .task-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 20px 0 12px;
+    flex-wrap: wrap;
+    gap: 10px;
+    background: white;
+    padding: 12px 16px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,.04);
+  }
+  .check-all-btn {
+    background: #16a34a;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .check-all-btn:hover { background: #15803d; }
+  .remote-btn {
+    display: block;
+    background: linear-gradient(90deg, #1e40af, #2563eb);
+    color: white;
+    text-align: center;
+    padding: 11px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 14.5px;
+    transition: all 0.15s;
+  }
+  .remote-btn:hover { filter: brightness(1.05); }
     background: white;
     border-radius: 16px;
     padding: 18px;
@@ -165,7 +298,40 @@
     border-radius: 10px;
     font-size: 15px;
   }
-  .progress {
+  .task-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 18px 0 10px;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .task-title {
+    font-weight: 700;
+    font-size: 1.05rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .check-all-btn {
+    background: #16a34a;
+    color: white;
+    border: none;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .check-all-btn:hover { background: #15803d; }
+  .device-card.check-card {
+    min-height: 90px;
+    justify-content: center;
+  }
+  .device-card.check-card .emoji {
+    font-size: 28px;
+    margin-bottom: 4px;
+  }
     font-size: 13px;
     color: #16a34a;
     font-weight: 600;
@@ -225,10 +391,10 @@
     <img src="Logo.png" alt="Logo" class="logo-home">
     <h2>ระบบเช็คงาน Preventive Maintenance</h2>
     <div class="home-buttons">
-      <button class="btn primary" onclick="go('month')">เช็คงานรายเดือน</button>
-      <button class="btn" onclick="go('remote')">Remote User</button>
-      <button class="btn" onclick="go('devices')">จัดการรายการเครื่อง</button>
-      <button class="btn" onclick="go('year')">ดูตารางทั้งปี</button>
+      <button class="btn primary" onclick="go('month')">📋 เช็คงานรายเดือน</button>
+      <button class="btn" onclick="go('remote')">🖥️ Remote User</button>
+      <button class="btn" onclick="go('devices')">⚙️ จัดการรายการเครื่อง</button>
+      <button class="btn" onclick="go('year')">📅 ดูตารางทั้งปี</button>
     </div>
   </div>
 </div>
@@ -490,11 +656,13 @@ function renderMonthTasks() {
 
   pcTasks.forEach(task => {
     const prog = getProgress(pcs, 'pc', task);
-    const taskTitle = document.createElement('div');
-    taskTitle.style.fontWeight = '600';
-    taskTitle.style.margin = '12px 0 6px';
-    taskTitle.innerHTML = `${task} <span class="progress">เช็คไปแล้ว ${prog.done}/${prog.total}</span>`;
-    container.appendChild(taskTitle);
+    const header = document.createElement('div');
+    header.className = 'task-header';
+    header.innerHTML = `
+      <div class="task-title">💻 ${task} <span class="progress">เช็คไปแล้ว ${prog.done}/${prog.total}</span></div>
+      <button class="check-all-btn" onclick="checkAll('${task}', 'pc', ${month})">เช็คแล้วทุกเครื่อง</button>
+    `;
+    container.appendChild(header);
 
     const list = document.createElement('div');
     list.className = 'device-list';
@@ -503,8 +671,9 @@ function renderMonthTasks() {
       const key = `pc-${d.id}-${task}-${month}`;
       if (checks[key]) return;
       const card = document.createElement('div');
-      card.className = 'device-card';
+      card.className = 'device-card check-card';
       card.innerHTML = `
+        <div class="emoji">💻</div>
         <div class="check-dot"></div>
         <span>${d.name}</span>
       `;
@@ -522,11 +691,13 @@ function renderMonthTasks() {
 
   printerTasks.forEach(task => {
     const prog = getProgress(printers, 'prn', task);
-    const taskTitle = document.createElement('div');
-    taskTitle.style.fontWeight = '600';
-    taskTitle.style.margin = '12px 0 6px';
-    taskTitle.innerHTML = `${task} <span class="progress">เช็คไปแล้ว ${prog.done}/${prog.total}</span>`;
-    container.appendChild(taskTitle);
+    const header = document.createElement('div');
+    header.className = 'task-header';
+    header.innerHTML = `
+      <div class="task-title">🖨️ ${task} <span class="progress">เช็คไปแล้ว ${prog.done}/${prog.total}</span></div>
+      <button class="check-all-btn" onclick="checkAll('${task}', 'prn', ${month})">เช็คแล้วทุกเครื่อง</button>
+    `;
+    container.appendChild(header);
 
     const list = document.createElement('div');
     list.className = 'device-list';
@@ -535,8 +706,9 @@ function renderMonthTasks() {
       const key = `prn-${d.id}-${task}-${month}`;
       if (checks[key]) return;
       const card = document.createElement('div');
-      card.className = 'device-card';
+      card.className = 'device-card check-card';
       card.innerHTML = `
+        <div class="emoji">🖨️</div>
         <div class="check-dot"></div>
         <span>${d.name}</span>
       `;
@@ -545,6 +717,25 @@ function renderMonthTasks() {
     });
     container.appendChild(list);
   });
+}
+
+function checkAll(task, type, month) {
+  const devices = type === 'pc' ? pcs : printers;
+  const prefix = type === 'pc' ? 'pc' : 'prn';
+  if (!confirm(`ต้องการเช็ค "${task}" ให้ครบทุกเครื่องใช่หรือไม่?`)) return;
+  devices.forEach(d => {
+    const key = `${prefix}-${d.id}-${task}-${month}`;
+    checks[key] = true;
+  });
+  saveChecks();
+  const toast = document.getElementById('toast');
+  toast.textContent = 'เช็คครบทุกเครื่องแล้ว';
+  toast.classList.add('show');
+  setTimeout(() => {
+    toast.classList.remove('show');
+    toast.textContent = 'ลงข้อมูลแล้ว';
+  }, 1200);
+  renderMonthTasks();
 }
 
 function markDone(key, card) {

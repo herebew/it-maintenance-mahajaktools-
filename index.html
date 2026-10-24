@@ -462,8 +462,35 @@ let pcs = JSON.parse(localStorage.getItem('pcs') || 'null') || Array.from({lengt
 }));
 let printers = JSON.parse(localStorage.getItem('printers') || 'null') || Array.from({length:15}, (_,i) => ({id:i+1, name:`Printer-${i+1}`}));
 
-// Per-device checked state: key = `${type}-${deviceId}-${task}-${month}`
-let checks = JSON.parse(localStorage.getItem('deviceChecks') || '{}');
+let checks = {};
+
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxtafZBbRivPGOco6wPaKKkEliX0LGVl_bmi4OtCqX31mgZQoJJUNz95k2MWW__LI12rw/exec';
+
+// Load checks from Google Sheets
+async function loadChecks() {
+  try {
+    const res = await fetch(SCRIPT_URL);
+    const data = await res.json();
+    checks = data || {};
+  } catch (e) {
+    console.error('Load failed', e);
+    checks = JSON.parse(localStorage.getItem('deviceChecks') || '{}');
+  }
+}
+
+// Save one check to Google Sheets
+async function saveCheck(key, checked) {
+  checks[key] = checked;
+  localStorage.setItem('deviceChecks', JSON.stringify(checks)); // backup
+  try {
+    await fetch(SCRIPT_URL, {
+      method: 'POST',
+      body: JSON.stringify({ key, checked, note: '' })
+    });
+  } catch (e) {
+    console.error('Save failed', e);
+  }
+}
 
 function saveDevices() {
   localStorage.setItem('pcs', JSON.stringify(pcs));
@@ -759,10 +786,10 @@ function checkAll(task, type, month) {
 }
 
 function toggleCheck(key, card) {
-  checks[key] = !checks[key];
-  saveChecks();
+  const newVal = !checks[key];
+  saveCheck(key, newVal);
   const toast = document.getElementById('toast');
-  toast.textContent = checks[key] ? 'ลงข้อมูลแล้ว' : 'ยกเลิกการเช็คแล้ว';
+  toast.textContent = newVal ? 'ลงข้อมูลแล้ว' : 'ยกเลิกการเช็คแล้ว';
   toast.classList.add('show');
   setTimeout(() => toast.classList.remove('show'), 900);
   renderMonthTasks();
@@ -783,6 +810,9 @@ function checkAllMonth() {
 }
 
 // Init
+loadChecks().then(() => {
+  if (document.getElementById('month').classList.contains('active')) renderMonthTasks();
+});
 document.getElementById('monthSelect').addEventListener('change', renderMonthTasks);
 </script>
 </body>
